@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>我的笔记</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="dashboard.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" href="/stylesheets/myStyle.css" media="screen" type="text/css" />
+</head>
+<body>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <span class="navbar-brand" id="spanCookie">用户模式</span>
+        </div>
+        <div style="margin-left: 500px" id="navigation">
+            <ul class="nav navbar-nav">
+                <li><input style="margin-top: 15px" type="text" id="search" placeholder="请输入搜索信息"></li>
+                <li><button id="notebook_name" style="margin-top: 10px;margin-left: 20px" type="button" class="btn btn-success">搜索笔记本名</button></li>
+                <li><button id="label_name" style="margin-top: 10px;margin-left: 20px" type="button" class="btn btn-warning">搜索标签</button></li>
+            </ul>
+        </div>
+        <div class="pull-right" style="margin: 10px">
+            <button id="cutPage" type="button" class="btn btn-danger">截图</button>
+            <a href="/information"><button id="Information" type="button" class="btn btn-info">个人中心</button></a>
+            <a href="/logout"><button  type="button" class="btn btn-warning">退出</button></a>
+        </div>
+    </div>
+</nav>
+<div class="row">
+    <div class="col-md-2">
+        <div class="panel-group table-responsive" role="tablist">
+            <div class="panel panel-primary leftMenu">
+                <!-- 利用data-target指定要折叠的分组列表 -->
+                <div class="panel-heading" id="collapseListGroupHeading1" data-toggle="collapse" data-target="#collapseListGroup1" role="tab" >
+                    <h4 style="text-align: center" class="panel-title">
+                        属于我的笔记
+                    </h4>
+                </div>
+                <!-- .panel-collapse和.collapse标明折叠元素 .in表示要显示出来 -->
+                <div id="collapseListGroup1" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="collapseListGroupHeading1">
+                    <ul id="list" class="list-group">
+                        <li v-for="note in noteList">
+                            <!-- 利用data-target指定URL -->
+                            <button  type="button" class="btn btn-link" >
+                                <image :id="note" style="display:block;width:100%;" src="/images/book.png" v-on:click="showNoteInfo"></image>
+                            </button>
+                            <span style="text-align: center;display:block">{{note}}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel panel-primary leftMenu">
+                <!-- 利用data-target指定要折叠的分组列表 -->
+                <div class="panel-heading" id="collapseListGroupHeading2" data-toggle="collapse" data-target="#collapseListGroup2" role="tab" >
+                    <h4 style="text-align: center" class="panel-title">
+                        属于用户组的笔记
+                    </h4>
+                </div>
+                <!-- .panel-collapse和.collapse标明折叠元素 .in表示要显示出来 -->
+                <div id="collapseListGroup2" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="collapseListGroupHeading2">
+                    <ul id="list_g" class="list-group">
+                        <li v-for="note in noteList_g">
+                            <!-- 利用data-target指定URL -->
+                            <button  type="button" class="btn btn-link" >
+                                <image :id="note" style="display:block;width:100%;" src="/images/book.png" v-on:click="showNoteInfo"></image>
+                            </button>
+                            <span style="text-align: center;display:block">{{note}}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-10" id="all">
+        <div class="row">
+            <div class="col-md-5">
+                <button id="save" type="button" class="btn btn-success">保存笔记本</button>
+                <button id="download" type="button" class="btn btn-primary">下载笔记本</button>
+                <button id="add" type="button" class="btn btn-info">增加新笔记本</button>
+                <button id="delete" type="button" class="btn btn-warning">删除笔记本</button>
+            </div>
+            <div id="note_info" class="col-md-7">
+                <label>笔记本名:</label>
+                <input size="16" type="text" id="notebookName" v-bind:value="name">
+                <label style="margin-left: 15px">用户:</label>
+                <label>{{belong_user}}</label>
+                <label style="margin-left: 15px">所属用户组:</label>
+                <label>{{belong_group}}</label>
+                <label style="margin-left: 15px">标签:</label>
+                <input size="13" type="text" id="notebookLabel" v-bind:value="label">
+            </div>
+        </div>
+        <div class="well">
+            <div >
+                <form role="form" >
+                    <div class="form-group" id="noteContent">
+                        <textarea style="height: 500px;width: 980px;resize: none;" type="text" v-model="n_content" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="well">
+            <div class="row">
+                <div class="col-md-5">
+
+                    <!--<img src="/images/book.png" style="display:block;width:100%;">-->
+                    <img id="my_img" v-bind:src="s_content" style="display:block;width:100%;">
+                </div>
+                <div class="col-md-7">
+                    <form action="/fileupload" method="post" enctype='multipart/form-data'  onsubmit="return checkTask(this)">
+                        <label style="margin-top: 45px;margin-left: 150px" for="resource">上传图片</label>
+                        <input style="margin-top: 45px;margin-left: 150px"  type="file" id="resource" name="resource">
+                        <button style="margin-top: 45px;margin-left: 150px" class="btn btn-success" type="submit">确认上传</button>
+                    </form>
+                    <!--<button id="download" type="button" class="btn btn-primary">下载笔记本</button>-->
+                    <!--<button id="add" type="button" class="btn btn-info">增加新笔记本</button>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+<script src="../../assets/js/vendor/holder.min.js"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+
+
+<script src='/javascripts/vue.min.js'></script>
+<script src="/javascripts/home.js"></script>
+</body>
+</html>
